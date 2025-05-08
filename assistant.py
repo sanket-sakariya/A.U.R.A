@@ -15,6 +15,7 @@ engine = pyttsx3.init()
 recording = False
 out = None
 
+
 def speak(text, update_status=None, update_output=None):
     if update_status:
         update_status("Speaking...")
@@ -98,7 +99,15 @@ def run_assistant(update_status, update_output, close_app_callback):
             listening = False
             close_app_callback()
             break
+        elif "open" in query:
+            from openapp import open_app
+            app_name = query.replace("open", "").strip()
+            open_app(app_name, update_status, update_output)
 
+        elif "close" in query:
+            from openapp import close_app
+            app_name = query.replace("close", "").strip()
+            close_app(app_name, update_status, update_output)
 
         elif 'open youtube' in query:
             speak("Opening YouTube", update_status, update_output)
@@ -168,4 +177,7 @@ def run_assistant(update_status, update_output, close_app_callback):
             speak(response, update_status, update_output)
 
         else:
-            speak("I didn't understand. Please repeat.", update_status, update_output)
+            prompt = query.strip()
+            from gemini_chat import ask_gemini
+            response = ask_gemini(prompt)
+            speak(response, update_status, update_output)

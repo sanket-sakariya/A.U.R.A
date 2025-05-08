@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QTextEdi
 from PyQt5.QtGui import QFont, QPixmap, QCursor
 from PyQt5.QtCore import Qt
 from assistant import run_assistant
+import os
 
 class VoiceAssistantGUI(QWidget):
     def __init__(self):
@@ -56,9 +57,11 @@ class VoiceAssistantGUI(QWidget):
             )
             self.listening_thread.start()
 
+
     def close_app(self):
         self.update_status("Exiting...")
         QApplication.instance().quit()
+        os._exit(0)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

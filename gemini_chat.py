@@ -22,7 +22,14 @@ def clean_text(text):
 
 def ask_gemini(prompt):
     try:
-        response = model.generate_content(prompt)
+        is_deep_search = "deep search" in prompt.lower()
+        clean_prompt = prompt.replace("deep search", "").strip()
+
+        if not is_deep_search:
+            # Add instruction to keep the answer brief
+            clean_prompt += "\nPlease keep the answer short and concise (within 50–100 words)."
+
+        response = model.generate_content(clean_prompt)
         return clean_text(response.text)
     except Exception as e:
         return f"Error: {e}"
