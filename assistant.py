@@ -149,7 +149,9 @@ def run_assistant(update_status, update_output, close_app_callback):
                 update_output("Please say 'open website [name]' or 'close website [name]'.")
 
 
-
+        elif "lock pc" in query or "lock the pc" in query:
+            from openapp import lock_pc
+            lock_pc(update_status, update_output)
 
 
         elif 'wikipedia' in query:

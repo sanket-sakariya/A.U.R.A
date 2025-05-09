@@ -104,4 +104,16 @@ def maximize_app(app_name, update_status, update_output):
 
 
 
+import ctypes
+
+def lock_pc(update_status=None, update_output=None):
+    try:
+        ctypes.windll.user32.LockWorkStation()
+        if update_status:
+            update_status("Locking the PC...")
+        if update_output:
+            update_output("Your PC is now locked.")
+    except Exception as e:
+        if update_output:
+            update_output(f"Failed to lock the PC: {e}")
 
