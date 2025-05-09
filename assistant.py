@@ -104,6 +104,14 @@ def run_assistant(update_status, update_output, close_app_callback):
             app_name = query.replace("open", "").strip()
             open_app(app_name, update_status, update_output)
 
+        elif "create" in query and "file" in query:
+            from file import create_and_write_file
+            filename = create_and_write_file(query, update_status, update_output)
+            if filename:
+                update_status("Waiting for next instruction to write content...")
+
+
+
         elif "close" in query:
             from openapp import close_app
             app_name = query.replace("close", "").strip()
@@ -127,6 +135,22 @@ def run_assistant(update_status, update_output, close_app_callback):
         elif 'open google' in query:
             speak("Opening Google", update_status, update_output)
             pywhatkit.search("Google")
+
+        elif "website" in query:
+            from webcontrol import open_website, close_website
+
+            command = query.lower().strip()
+
+            if "stop website" in command:
+                close_website(command, update_status, update_output)
+            elif "start website" in command:
+                open_website(command, update_status, update_output)
+            else:
+                update_output("Please say 'open website [name]' or 'close website [name]'.")
+
+
+
+
 
         elif 'wikipedia' in query:
             speak("Searching Wikipedia...", update_status, update_output)

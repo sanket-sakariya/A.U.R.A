@@ -3,6 +3,7 @@ import os
 import webbrowser
 import sys
 import pygetwindow as gw
+from gemini_chat import ask_gemini
 
 # Mapping of common app names to their executable paths or commands
 APP_COMMANDS = {
@@ -99,3 +100,8 @@ def maximize_app(app_name, update_status, update_output):
     except Exception as e:
         update_output(f"❌ Failed to maximize {app_name}: {e}")
         update_status("Idle")
+
+
+
+
+
