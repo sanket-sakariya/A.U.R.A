@@ -109,6 +109,17 @@ def run_assistant(update_status, update_output, close_app_callback):
             app_name = query.replace("close", "").strip()
             close_app(app_name, update_status, update_output)
 
+        elif "minimize" in query or "small" in query:
+            from openapp import minimize_app
+            app_name = query.replace("minimize", "").replace("small", "").strip()
+            minimize_app(app_name, update_status, update_output)
+
+        elif "maximize" in query or "big" in query:
+            from openapp import maximize_app
+            app_name = query.replace("maximize", "").replace("big", "").strip()
+            maximize_app(app_name, update_status, update_output)
+
+
         elif 'open youtube' in query:
             speak("Opening YouTube", update_status, update_output)
             pywhatkit.playonyt("latest songs")
@@ -181,3 +192,4 @@ def run_assistant(update_status, update_output, close_app_callback):
             from gemini_chat import ask_gemini
             response = ask_gemini(prompt)
             speak(response, update_status, update_output)
+
