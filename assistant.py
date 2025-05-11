@@ -13,14 +13,10 @@ recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-    # print(voices)
 engine.setProperty('voice', voices[1].id)
-    # eel.DisplayMessage(text)
-# engine.say(text)
 
 recording = False
 out = None
-
 
 def speak(text, update_status=None, update_output=None):
     if update_status:
@@ -92,9 +88,6 @@ def greet(update_status, update_output):
         greet_msg = "Good Evening!"
     speak(greet_msg, update_status, update_output)
     speak("Good day. I am Aura, your Autonomous User Response Assistant. At your service, always.", update_status, update_output)
-
-
-
 
 
 def run_assistant(update_status, update_output, close_app_callback):
