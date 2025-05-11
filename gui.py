@@ -2,7 +2,7 @@ import sys
 import threading
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QTextEdit
 from PyQt5.QtGui import QFont, QPixmap, QCursor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from assistant import run_assistant
 import os
 
@@ -41,6 +41,9 @@ class VoiceAssistantGUI(QWidget):
         self.listening_thread = None
         self.active = False
 
+        # Start assistant automatically after 1 second
+        QTimer.singleShot(1000, self.start_assistant)
+
     def update_status(self, message):
         self.status_label.setText(f"Status: {message}")
 
@@ -49,6 +52,10 @@ class VoiceAssistantGUI(QWidget):
 
     def toggle_listening(self, event):
         if not self.active:
+            self.start_assistant()
+
+    def start_assistant(self):
+        if not self.active:
             self.active = True
             self.listening_thread = threading.Thread(
                 target=run_assistant,
@@ -56,7 +63,6 @@ class VoiceAssistantGUI(QWidget):
                 daemon=True
             )
             self.listening_thread.start()
-
 
     def close_app(self):
         self.update_status("Exiting...")
