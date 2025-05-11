@@ -9,13 +9,13 @@ import os
 class VoiceAssistantGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Futuristic Voice Assistant")
+        self.setWindowTitle("A.U.R.A Virtual Assistant")
         self.setGeometry(300, 200, 700, 500)
         self.setStyleSheet("background-color: #1e1e2f; color: #39ff14;")
 
         layout = QVBoxLayout()
 
-        self.title_label = QLabel("🤖 Virtual Assistant")
+        self.title_label = QLabel("🤖 A.U.R.A")
         self.title_label.setFont(QFont("Orbitron", 24))
         self.title_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title_label)
