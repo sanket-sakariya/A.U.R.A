@@ -10,7 +10,7 @@ def launch_app():
     try:
         # Start the GUI app as a subprocess
         process = subprocess.Popen([sys.executable, script_path])
-        print("NOVA Voice Assistant launched successfully.")
+        print("A.U.R.A launched successfully.")
 
         # Wait for GUI to close
         process.wait()
