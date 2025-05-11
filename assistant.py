@@ -87,6 +87,10 @@ def greet(update_status, update_output):
     speak(greet_msg, update_status, update_output)
     speak("I am your futuristic assistant. How can I help you?", update_status, update_output)
 
+
+
+
+
 def run_assistant(update_status, update_output, close_app_callback):
     greet(update_status, update_output)
     while True:
@@ -127,10 +131,21 @@ def run_assistant(update_status, update_output, close_app_callback):
             app_name = query.replace("maximize", "").replace("big", "").strip()
             maximize_app(app_name, update_status, update_output)
 
+        elif "play youtube" in query:
+            from webcontrol import play_youtube_video
+            play_youtube_video(query, update_status, update_output)
 
-        elif 'open youtube' in query:
-            speak("Opening YouTube", update_status, update_output)
-            pywhatkit.playonyt("latest songs")
+        elif "weather" in query:
+            from webcontrol import get_weather
+            import re
+            match = re.search(r"(?:weather in|weather at|in|at)\s+(.*)", query)
+            city = match.group(1).strip() if match else "Rajkot"  # Default city fallback
+
+            weather_info = get_weather(city)
+            update_status("Fetching weather information...")
+            speak(weather_info, update_status, update_output)
+            update_output(weather_info)
+
 
         elif 'open google' in query:
             speak("Opening Google", update_status, update_output)

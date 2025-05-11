@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service  # ✅ Required import
 import time
+import os
+from dotenv import load_dotenv
 
 # List of allowed websites (predefined)
 ALLOWED_WEBSITES = {
@@ -81,3 +83,64 @@ def close_website(query, update_status=None, update_output=None):
     except Exception as e:
         if update_output:
             update_output(f"Error closing website: {e}")
+
+
+import pywhatkit
+
+def play_youtube_video(query, update_status=None, update_output=None):
+    try:
+        # Remove trigger phrase
+        search_term = query.lower().replace("play youtube", "").strip()
+
+        if search_term:
+            message = f"Playing {search_term} on YouTube."
+            pywhatkit.playonyt(search_term)
+        else:
+            message = "Playing latest songs on YouTube."
+            pywhatkit.playonyt("latest songs")
+
+        if update_status:
+            update_status(message)
+        if update_output:
+            update_output(message)
+
+    except Exception as e:
+        if update_output:
+            update_output(f"Error playing YouTube video: {e}")
+
+
+import os
+import requests
+
+import requests
+
+def get_weather(city):
+    try:
+        api_key = "0569f7fb68d7ef89066d133f8976f168"  # Replace with your actual Weatherstack API key
+        url = "http://api.weatherstack.com/current"
+        querystring = {"access_key": api_key, "query": city}
+
+        response = requests.get(url, params=querystring)
+        data = response.json()
+        print(data)  # Debug output
+
+        if 'error' in data:
+            return f"City '{city}' not found or API error: {data['error'].get('info', 'Unknown error')}"
+
+        location = data["location"]["name"]
+        country = data["location"]["country"]
+        temp = data["current"]["temperature"]
+        feelslike = data["current"]["feelslike"]
+        condition = data["current"]["weather_descriptions"][0]
+        humidity = data["current"]["humidity"]
+
+        return (
+            f"Weather in {location}, {country}:\n"
+            f"Temperature: {temp}°C (feels like {feelslike}°C), "
+            f"Condition: {condition}, Humidity: {humidity}%"
+        )
+
+    except Exception as e:
+        return f"Failed to get weather info: {e}"
+
+
