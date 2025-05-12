@@ -153,10 +153,6 @@ def run_assistant(update_status, update_output, close_app_callback):
             speak(weather_info, update_status, update_output)
             update_output(weather_info)
 
-        elif 'open google' in query:
-            speak("Opening Google", update_status, update_output)
-            pywhatkit.search("Google")
-
         elif "website" in query:
             from webcontrol import open_website, close_website
             command = query.lower().strip()
