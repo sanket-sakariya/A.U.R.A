@@ -42,3 +42,52 @@ def create_and_write_file(command, update_status=None, update_output=None):
 
 
 # "Create a {extension} file named {file_name} that calculates factorial of a number"
+
+def read_created_file(command, update_status=None, update_output=None):
+    try:
+        # Extract file extension and filename
+        words = command.lower().split()
+        if "file" in words and "named" in words:
+            ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
+            name_index = words.index("named") + 1
+            filename = words[name_index]
+
+            extension = {
+                "text": ".txt",
+                "python": ".py",
+                "html": ".html",
+                "java": ".java",
+                "json": ".json"
+            }.get(ext, ".txt")
+
+            full_filename = f"{filename}{extension}"
+
+            if not os.path.exists(full_filename):
+                msg = f"File '{full_filename}' does not exist."
+                if update_output:
+                    update_output(msg)
+                if update_status:
+                    update_status("File not found")
+                return
+
+            with open(full_filename, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            if update_status:
+                update_status(f"Reading {full_filename}")
+            if update_output:
+                update_output(f"Content of `{full_filename}`:\n\n{content}")
+
+            return content
+
+    except Exception as e:
+        if update_output:
+            update_output(f"Error: {e}")
+        return None
+
+
+# “Read file named demo”
+
+# “Open and read python file named script”
+
+# “Show content of html file named index”

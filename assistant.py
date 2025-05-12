@@ -119,6 +119,11 @@ def run_assistant(update_status, update_output, close_app_callback):
             if filename:
                 update_status("Waiting for next instruction to write content...")
 
+        elif "read file" in query or "show content" in query:
+            from file import read_created_file
+            read_created_file(query, update_status, update_output)
+
+
         elif "close" in query:
             from openapp import close_app
             app_name = query.replace("close", "").strip()
