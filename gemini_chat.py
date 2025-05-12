@@ -27,7 +27,7 @@ def ask_gemini(prompt):
 
         if not is_deep_search:
             # Add instruction to keep the answer brief
-            clean_prompt += "\nPlease keep the answer short and concise (within 50–100 words)."
+            clean_prompt += "\nPlease keep the answer short and concise (within 50–100 words). or if answer is possible in a single line."
 
         response = model.generate_content(clean_prompt)
         return clean_text(response.text)
