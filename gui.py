@@ -37,13 +37,13 @@ class VoiceAssistantGUI(QWidget):
         self.output_area.setReadOnly(True)
         layout.addWidget(self.output_area)
 
-        # Mic Icon
-        self.mic_label = QLabel()
-        self.mic_label.setAlignment(Qt.AlignCenter)
-        self.mic_label.setPixmap(QPixmap("voice.png").scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        self.mic_label.setCursor(QCursor(Qt.PointingHandCursor))
-        self.mic_label.mousePressEvent = self.toggle_listening
-        layout.addWidget(self.mic_label)
+        # # Mic Icon
+        # self.mic_label = QLabel()
+        # self.mic_label.setAlignment(Qt.AlignCenter)
+        # self.mic_label.setPixmap(QPixmap("voice.png").scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        # self.mic_label.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.mic_label.mousePressEvent = self.toggle_listening
+        # layout.addWidget(self.mic_label)
 
         # Footer
         self.footer = QLabel("Created By : Sanket")
