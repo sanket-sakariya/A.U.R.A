@@ -10,13 +10,13 @@ import numpy as np
 from threading import Thread
 
 recognizer = sr.Recognizer()
-engine = pyttsx3.init()
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
 recording = False
 out = None
+
 
 def speak(text, update_status=None, update_output=None):
     if update_status:
@@ -28,12 +28,13 @@ def speak(text, update_status=None, update_output=None):
     if update_status:
         update_status("Idle")
 
+
 def take_command(update_status=None, update_output=None):
     with sr.Microphone() as source:
         if update_status:
             update_status("Listening...")
-        recognizer.pause_threshold = 1
-        audio = recognizer.listen(source)
+        recognizer.adjust_for_ambient_noise(source, duration=0.3)
+        audio = recognizer.listen(source, phrase_time_limit=5)
     try:
         if update_status:
             update_status("Recognizing...")
@@ -41,10 +42,14 @@ def take_command(update_status=None, update_output=None):
         if update_output:
             update_output(f"You: {query}")
         return query.lower()
-    except:
+    except sr.UnknownValueError:
         if update_output:
-            update_output("Didn't catch that.")
-        return "none"
+            update_output("Sorry, I didn’t catch that.")
+    except sr.RequestError:
+        if update_output:
+            update_output("Speech service unavailable.")
+    return "none"
+
 
 def start_screen_recording(update_status=None, update_output=None):
     global recording, out
@@ -68,6 +73,7 @@ def start_screen_recording(update_status=None, update_output=None):
         speak("Screen recording saved", update_status, update_output)
 
     Thread(target=record).start()
+
 
 def stop_screen_recording(update_status=None, update_output=None):
     global recording
@@ -99,9 +105,9 @@ def run_assistant(update_status, update_output, close_app_callback):
 
         if query in ['exit', 'quit', 'stop assistant', 'close assistant']:
             speak("Goodbye!", update_status, update_output)
-            listening = False
             close_app_callback()
             break
+
         elif "open" in query:
             from openapp import open_app
             app_name = query.replace("open", "").strip()
@@ -112,8 +118,6 @@ def run_assistant(update_status, update_output, close_app_callback):
             filename = create_and_write_file(query, update_status, update_output)
             if filename:
                 update_status("Waiting for next instruction to write content...")
-
-
 
         elif "close" in query:
             from openapp import close_app
@@ -138,13 +142,11 @@ def run_assistant(update_status, update_output, close_app_callback):
             from webcontrol import get_weather
             import re
             match = re.search(r"(?:weather in|weather at|in|at)\s+(.*)", query)
-            city = match.group(1).strip() if match else "Rajkot"  # Default city fallback
-
+            city = match.group(1).strip() if match else "Rajkot"
             weather_info = get_weather(city)
             update_status("Fetching weather information...")
             speak(weather_info, update_status, update_output)
             update_output(weather_info)
-
 
         elif 'open google' in query:
             speak("Opening Google", update_status, update_output)
@@ -152,9 +154,7 @@ def run_assistant(update_status, update_output, close_app_callback):
 
         elif "website" in query:
             from webcontrol import open_website, close_website
-
             command = query.lower().strip()
-
             if "stop website" in command:
                 close_website(command, update_status, update_output)
             elif "start website" in command:
@@ -162,11 +162,9 @@ def run_assistant(update_status, update_output, close_app_callback):
             else:
                 update_output("Please say 'open website [name]' or 'close website [name]'.")
 
-
-        elif "lock pc" in query or "lock the pc" in query:
+        elif "lock pc" in query:
             from openapp import lock_pc
             lock_pc(update_status, update_output)
-
 
         elif 'wikipedia' in query:
             speak("Searching Wikipedia...", update_status, update_output)
@@ -220,7 +218,7 @@ def run_assistant(update_status, update_output, close_app_callback):
             search_query = query.replace("search", "").strip()
             speak(f"Searching for {search_query}", update_status, update_output)
             pywhatkit.search(search_query)
-            
+
         elif "gemini" in query:
             prompt = query.replace("gemini", "").strip()
             from gemini_chat import ask_gemini
@@ -232,4 +230,3 @@ def run_assistant(update_status, update_output, close_app_callback):
             from gemini_chat import ask_gemini
             response = ask_gemini(prompt)
             speak(response, update_status, update_output)
-
