@@ -174,7 +174,7 @@ def run_assistant(update_status, update_output, close_app_callback):
         elif 'wikipedia' in query:
             speak("Searching Wikipedia...", update_status, update_output)
             try:
-                results = wikipedia.summary(query.replace("wikipedia", ""), sentences=2)
+                results = wikipedia.summary(query.replace("wikipedia", ""), sentences=4)
                 speak("According to Wikipedia", update_status, update_output)
                 speak(results, update_status, update_output)
             except:
