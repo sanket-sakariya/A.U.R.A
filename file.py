@@ -1,4 +1,5 @@
 import os
+from assistant import speak
 from gemini_chat import ask_gemini
 
 def create_and_write_file(command, update_status=None, update_output=None):
@@ -41,7 +42,8 @@ def create_and_write_file(command, update_status=None, update_output=None):
         return None
 
 
-# "Create a {extension} file named {file_name} that calculates factorial of a number"
+# "Create a {extension} file name {file_name} that calculates factorial of a number"
+
 
 def read_created_file(command, update_status=None, update_output=None):
     try:
@@ -68,6 +70,7 @@ def read_created_file(command, update_status=None, update_output=None):
                     update_output(msg)
                 if update_status:
                     update_status("File not found")
+                speak("Sorry, I couldn't find the file.")
                 return
 
             with open(full_filename, "r", encoding="utf-8") as f:
@@ -77,16 +80,21 @@ def read_created_file(command, update_status=None, update_output=None):
                 update_status(f"Reading {full_filename}")
             if update_output:
                 update_output(f"Content of `{full_filename}`:\n\n{content}")
+            speak(f"Here is the content of {full_filename}")
+            speak(content[:400])  # Speak only first 400 chars to avoid overload
+
             return content
 
     except Exception as e:
         if update_output:
             update_output(f"Error: {e}")
+        speak("Something went wrong while reading the file.")
         return None
 
 
-# “Read file named demo”
 
-# “Open and read python file named script”
+# “Read file name demo”
 
-# “Show content of html file named index”
+# “Open and read python file name script”
+
+# “Show content of html file name index”
