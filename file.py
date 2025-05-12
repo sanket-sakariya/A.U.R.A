@@ -5,9 +5,9 @@ def create_and_write_file(command, update_status=None, update_output=None):
     try:
         # Extract filename and extension
         words = command.lower().split()
-        if "file" in words and "named" in words:
+        if "file" in words and "name" in words:
             ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
-            name_index = words.index("named") + 1
+            name_index = words.index("name") + 1
             filename = words[name_index]
             extension = {
                 "text": ".txt",
@@ -47,9 +47,9 @@ def read_created_file(command, update_status=None, update_output=None):
     try:
         # Extract file extension and filename
         words = command.lower().split()
-        if "file" in words and "named" in words:
+        if "file" in words and "name" in words:
             ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
-            name_index = words.index("named") + 1
+            name_index = words.index("name") + 1
             filename = words[name_index]
 
             extension = {
@@ -77,7 +77,6 @@ def read_created_file(command, update_status=None, update_output=None):
                 update_status(f"Reading {full_filename}")
             if update_output:
                 update_output(f"Content of `{full_filename}`:\n\n{content}")
-
             return content
 
     except Exception as e:

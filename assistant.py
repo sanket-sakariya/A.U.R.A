@@ -34,7 +34,7 @@ def take_command(update_status=None, update_output=None):
         if update_status:
             update_status("Listening...")
         recognizer.adjust_for_ambient_noise(source, duration=0.3)
-        audio = recognizer.listen(source, phrase_time_limit=5)
+        audio = recognizer.listen(source, phrase_time_limit=7)
     try:
         if update_status:
             update_status("Recognizing...")
