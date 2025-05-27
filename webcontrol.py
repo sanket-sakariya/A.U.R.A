@@ -89,24 +89,33 @@ import pywhatkit
 
 def play_youtube_video(query, update_status=None, update_output=None):
     try:
-        # Remove trigger phrase
-        search_term = query.lower().replace("play youtube", "").strip()
+        query_lower = query.lower()
 
-        if search_term:
-            message = f"Playing {search_term} on YouTube."
+        # Check if both 'play' and 'youtube' are in the query
+        if "play" in query_lower and "youtube" in query_lower:
+            # Extract what's between 'play' and 'youtube'
+            play_index = query_lower.find("play") + len("play")
+            youtube_index = query_lower.find("youtube")
+            search_term = query[play_index:youtube_index].strip()
+
+            # Fallback if nothing is between 'play' and 'youtube'
+            if not search_term:
+                search_term = "latest songs"
+                message = "Playing latest songs on YouTube."
+            else:
+                message = f"Playing {search_term} on YouTube."
+
             pywhatkit.playonyt(search_term)
-        else:
-            message = "Playing latest songs on YouTube."
-            pywhatkit.playonyt("latest songs")
 
-        if update_status:
-            update_status(message)
-        if update_output:
-            update_output(message)
+            if update_status:
+                update_status(message)
+            if update_output:
+                update_output(message)
 
     except Exception as e:
         if update_output:
             update_output(f"Error playing YouTube video: {e}")
+
 
 
 import os

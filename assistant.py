@@ -139,9 +139,11 @@ def run_assistant(update_status, update_output, close_app_callback):
             app_name = query.replace("maximize", "").replace("big", "").strip()
             maximize_app(app_name, update_status, update_output)
 
-        elif "play youtube" in query:
+        elif "play" in query.lower() and "youtube" in query.lower():
             from webcontrol import play_youtube_video
             play_youtube_video(query, update_status, update_output)
+
+
 
         elif "weather" in query:
             from webcontrol import get_weather
