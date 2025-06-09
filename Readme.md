@@ -1,6 +1,4 @@
-Here's a professional `README.md` file template for your **Virtual Desktop Assistant** project. You can copy this into your project’s root directory:
 
----
 
 ````markdown
 # 💻 Virtual Desktop Assistant (A.U.R.A)
@@ -110,7 +108,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 **Sanket Sakariya**
 📧 \[sanketsakariya2005@gmail.com]
-🌐 \[(Https://sanket-sakariya.netlify.app/)]
+🌐 \[https://sanket-sakariya.netlify.app/]
 
 ---
 
