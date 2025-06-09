@@ -38,13 +38,7 @@ A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled 
 | Gemini API        | Conversational AI                   |
 | MySQL             | Persistent storage (e.g. reminders) |
 
----
 
-📸 Screenshots
-
-> *(Add your GUI screenshots here if available)*
-
----
 
  📦 Installation
 
@@ -53,7 +47,7 @@ A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled 
 ```bash
 git clone https://github.com/sanket-sakariya/A.U.R.A.git
 cd virtual-desktop-assistant
-```
+````
 
 2. **Install dependencies:**
 
