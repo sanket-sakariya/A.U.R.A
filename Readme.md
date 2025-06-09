@@ -1,13 +1,13 @@
 
 
 ````markdown
-# 💻 Virtual Desktop Assistant (A.U.R.A)
+ 💻 Virtual Desktop Assistant (A.U.R.A)
 
 A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled virtual desktop assistant powered by speech recognition and Gemini AI. It performs various system-level tasks and answers queries in real time with intelligent conversational capabilities.
 
 ---
 
-## 🚀 Features
+🚀 Features
 
 - 🎙️ **Voice Command Integration**  
   Interact hands-free using natural language. Open apps, search the web, set reminders, and more.
@@ -26,7 +26,7 @@ A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled 
 
 ---
 
-## 🛠️ Tech Stack
+🛠️ Tech Stack
 
 | Technology        | Purpose                             |
 |-------------------|-------------------------------------|
@@ -40,13 +40,13 @@ A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled 
 
 ---
 
-## 📸 Screenshots
+📸 Screenshots
 
 > *(Add your GUI screenshots here if available)*
 
 ---
 
-## 📦 Installation
+ 📦 Installation
 
 1. **Clone the repository:**
 
