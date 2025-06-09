@@ -53,7 +53,7 @@ A.U.R.A (Autonomous User Response Assistant) is a Python-based voice-controlled 
 ```bash
 git clone https://github.com/sanket-sakariya/A.U.R.A.git
 cd virtual-desktop-assistant
-````
+```
 
 2. **Install dependencies:**
 
