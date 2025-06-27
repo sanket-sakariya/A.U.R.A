@@ -19,6 +19,8 @@ def clean_text(text):
     text = re.sub(r'^#+\s', '', text, flags=re.MULTILINE)  # Headers
     text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)  # Links
     return text.strip()
+
+
 def ask_gemini(prompt):
     try:
         # Define custom responses for basic chat questions
@@ -27,26 +29,81 @@ def ask_gemini(prompt):
             "who created you": "I am created by Sanket Sakariya and team.",
             "who made you": "I am made by Sanket Sakariya and team.",
             "who built you": "I am built by Sanket Sakariya and team.",
-            "who are you": "I am Aura an AI assistant developed by Sanket Sakariya and team.",
-            "what are you": "I am Aura an AI assistant created by Sanket Sakariya and team.",
+            "who are you": "I am an AI assistant developed by Sanket Sakariya and team.",
+            "what are you": "I am an AI assistant created by Sanket Sakariya and team.",
             "your developer": "My developer is Sanket Sakariya and team.",
             "your creator": "My creator is Sanket Sakariya and team.",
             "who is your developer": "My developer is Sanket Sakariya and team.",
             "who is your creator": "My creator is Sanket Sakariya and team.",
-            "what is your name": "I am Aura an AI assistant developed by Sanket Sakariya and team.",
-            "your name": "Aura",
-            "introduce yourself": "Hello! I am Aura an AI assistant developed by Sanket Sakariya and team. I'm here to help you with your questions and tasks.",
-            "about you": "I am Aura an AI assistant created by Sanket Sakariya and team to help users with various questions and tasks.",
+            "what is your name": "I am an AI assistant developed by Sanket Sakariya and team.",
+            "your name": "I am an AI assistant created by Sanket Sakariya and team.",
+            "introduce yourself": "Hello! I am an AI assistant developed by Sanket Sakariya and team. I'm here to help you with your questions and tasks.",
+            "about you": "I am an AI assistant created by Sanket Sakariya and team to help users with various questions and tasks.",
             "tell me about yourself": "I am an AI assistant developed by Sanket Sakariya and team. I'm designed to be helpful, informative, and assist you with various queries."
         }
         
-        # Check if the prompt matches any basic chat question
+        # Define allowed question categories/keywords
+        allowed_categories = [
+            # Educational & Learning
+            "what is", "how to", "explain", "define", "meaning", "learn", "study", "tutorial", "guide",
+            "help me", "teach me", "show me", "example", "difference between", "comparison",
+            
+            # Technology & Programming
+            "python", "programming", "code", "coding", "software", "computer", "technology", "algorithm",
+            "debug", "error", "bug", "development", "web", "app", "application", "database",
+            
+            # General Knowledge
+            "history", "science", "math", "mathematics", "physics", "chemistry", "biology", "geography",
+            "literature", "art", "music", "culture", "religion", "philosophy", "psychology",
+            
+            # Practical Help
+            "recipe", "cooking", "health", "fitness", "exercise", "diet", "nutrition", "medical",
+            "travel", "business", "finance", "money", "investment", "career", "job", "interview",
+            
+            # Creative & Writing
+            "write", "story", "poem", "essay", "letter", "email", "creative", "ideas", "brainstorm",
+            "suggest", "recommend", "advice", "tips", "improvement",
+            
+            # Problem Solving
+            "solve", "solution", "problem", "issue", "fix", "repair", "troubleshoot", "calculate",
+            "formula", "equation", "analysis", "research", "summary", "review",
+            
+            # Language & Communication
+            "translate", "language", "grammar", "spelling", "pronunciation", "synonym", "antonym",
+            "sentence", "paragraph", "communication", "speaking", "writing",
+            
+            # Current Events & Information
+            "news", "current", "latest", "update", "information", "facts", "data", "statistics",
+            "report", "analysis", "trend", "development",
+            
+            # Hobbies & Interests
+            "hobby", "game", "sport", "movie", "book", "music", "entertainment", "fun", "activity",
+            "craft", "diy", "project", "creative project"
+        ]
+        
+        # Check if the prompt matches any basic chat question first
         prompt_lower = prompt.lower().strip()
         for key, response in basic_responses.items():
             if key in prompt_lower:
                 return response
         
-        # Continue with normal processing for other questions
+        # Check if the query contains allowed keywords/categories
+        is_allowed = any(keyword in prompt_lower for keyword in allowed_categories)
+        
+        # Additional check for question patterns
+        question_patterns = [
+            prompt_lower.startswith(("what", "how", "why", "when", "where", "who", "which", "can you", "could you", "would you")),
+            "?" in prompt,
+            any(word in prompt_lower for word in ["help", "explain", "tell me", "show me", "teach me"])
+        ]
+        
+        has_question_pattern = any(question_patterns)
+        
+        # If not allowed or doesn't match question patterns, return default response
+        if not is_allowed and not has_question_pattern:
+            return "I don't understand."
+        
+        # Continue with normal processing for allowed questions
         is_deep_search = "deep search" in prompt.lower()
         clean_prompt = prompt.replace("deep search", "").strip()
 
@@ -56,5 +113,6 @@ def ask_gemini(prompt):
 
         response = model.generate_content(clean_prompt)
         return clean_text(response.text)
+        
     except Exception as e:
         return f"Error: {e}"

@@ -145,7 +145,7 @@ def run_assistant(update_status, update_output, close_app_callback):
 
 
 
-        elif "weather" in query:
+        elif "weather" in query.lower():
             from webcontrol import get_weather
             import re
             match = re.search(r"(?:weather in|weather at|in|at)\s+(.*)", query)
@@ -209,11 +209,11 @@ def run_assistant(update_status, update_output, close_app_callback):
             pyautogui.press("volumemute")
             speak("Volume muted", update_status, update_output)
 
-        elif 'start recording' in query:
+        elif 'start' in query.lower() and 'recording' in query.lower():
             speak("Starting screen recording", update_status, update_output)
             start_screen_recording(update_status, update_output)
 
-        elif 'stop recording' in query:
+        elif 'stop' in query.lower() and 'recording' in query.lower():
             speak("Stopping screen recording", update_status, update_output)
             stop_screen_recording(update_status, update_output)
 
