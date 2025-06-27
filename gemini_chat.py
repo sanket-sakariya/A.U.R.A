@@ -19,9 +19,34 @@ def clean_text(text):
     text = re.sub(r'^#+\s', '', text, flags=re.MULTILINE)  # Headers
     text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)  # Links
     return text.strip()
-
 def ask_gemini(prompt):
     try:
+        # Define custom responses for basic chat questions
+        basic_responses = {
+            "who developed you": "I am developed by Sanket Sakariya and team.",
+            "who created you": "I am created by Sanket Sakariya and team.",
+            "who made you": "I am made by Sanket Sakariya and team.",
+            "who built you": "I am built by Sanket Sakariya and team.",
+            "who are you": "I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team.",
+            "what are you": "I am A.U.R.A. an AI assistant created by Sanket Sakariya and team.",
+            "your developer": "My developer is Sanket Sakariya and team.",
+            "your creator": "My creator is Sanket Sakariya and team.",
+            "who is your developer": "My developer is Sanket Sakariya and team.",
+            "who is your creator": "My creator is Sanket Sakariya and team.",
+            "what is your name": "I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team.",
+            "your name": "A.U.R.A.",
+            "introduce yourself": "Hello! I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team. I'm here to help you with your questions and tasks.",
+            "about you": "I am A.U.R.A. an AI assistant created by Sanket Sakariya and team to help users with various questions and tasks.",
+            "tell me about yourself": "I am an AI assistant developed by Sanket Sakariya and team. I'm designed to be helpful, informative, and assist you with various queries."
+        }
+        
+        # Check if the prompt matches any basic chat question
+        prompt_lower = prompt.lower().strip()
+        for key, response in basic_responses.items():
+            if key in prompt_lower:
+                return response
+        
+        # Continue with normal processing for other questions
         is_deep_search = "deep search" in prompt.lower()
         clean_prompt = prompt.replace("deep search", "").strip()
 
