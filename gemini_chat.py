@@ -27,16 +27,16 @@ def ask_gemini(prompt):
             "who created you": "I am created by Sanket Sakariya and team.",
             "who made you": "I am made by Sanket Sakariya and team.",
             "who built you": "I am built by Sanket Sakariya and team.",
-            "who are you": "I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team.",
-            "what are you": "I am A.U.R.A. an AI assistant created by Sanket Sakariya and team.",
+            "who are you": "I am Aura an AI assistant developed by Sanket Sakariya and team.",
+            "what are you": "I am Aura an AI assistant created by Sanket Sakariya and team.",
             "your developer": "My developer is Sanket Sakariya and team.",
             "your creator": "My creator is Sanket Sakariya and team.",
             "who is your developer": "My developer is Sanket Sakariya and team.",
             "who is your creator": "My creator is Sanket Sakariya and team.",
-            "what is your name": "I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team.",
-            "your name": "A.U.R.A.",
-            "introduce yourself": "Hello! I am A.U.R.A. an AI assistant developed by Sanket Sakariya and team. I'm here to help you with your questions and tasks.",
-            "about you": "I am A.U.R.A. an AI assistant created by Sanket Sakariya and team to help users with various questions and tasks.",
+            "what is your name": "I am Aura an AI assistant developed by Sanket Sakariya and team.",
+            "your name": "Aura",
+            "introduce yourself": "Hello! I am Aura an AI assistant developed by Sanket Sakariya and team. I'm here to help you with your questions and tasks.",
+            "about you": "I am Aura an AI assistant created by Sanket Sakariya and team to help users with various questions and tasks.",
             "tell me about yourself": "I am an AI assistant developed by Sanket Sakariya and team. I'm designed to be helpful, informative, and assist you with various queries."
         }
         
