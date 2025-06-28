@@ -33,7 +33,7 @@ def create_and_write_file(command, update_status=None, update_output=None):
             prompt = command[prompt_start_index:].strip()
 
             # Ask Gemini and write content
-            content = code_gemini(prompt)
+            content = code_gemini(prompt,extension)
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
 

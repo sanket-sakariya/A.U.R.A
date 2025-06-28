@@ -81,6 +81,13 @@ def ask_gemini(prompt):
             "craft", "diy", "project", "creative project"
         ]
         
+        # coding related keywords
+        coding_keywords = [
+            "code", "programming", "python", "javascript", "java", "c++", "c#", "ruby", "php",
+            "html", "css", "sql", "database", "algorithm", "data structure", "debugging",
+            "software development", "web development", "app development"
+        ]
+
         # Check if the prompt matches any basic chat question first
         prompt_lower = prompt.lower().strip()
         for key, response in basic_responses.items():
@@ -99,6 +106,12 @@ def ask_gemini(prompt):
         
         has_question_pattern = any(question_patterns)
         
+        # Check if the prompt contains coding-related keywords
+        is_coding_related = any(keyword in prompt_lower for keyword in coding_keywords)
+        if is_coding_related:
+            # If coding-related, use code generation
+            return code_gemini(prompt)  # Default to Python code generation
+
         # If not allowed or doesn't match question patterns, return default response
         if not is_allowed and not has_question_pattern:
             return "I don't understand."
@@ -118,21 +131,21 @@ def ask_gemini(prompt):
         return f"Error: {e}"
 
 
-def code_gemini(prompt):
+def code_gemini(prompt,extension=None):
     try:
         clean_prompt = f"""
 {prompt}
 
 CRITICAL REQUIREMENTS:
-- Generate ONLY {prompt} code
+- Generate ONLY {extension} code
 - NO comments whatsoever
 - NO explanations
 - NO markdown code blocks
 - NO backticks (`)
 - NO language identifiers
 - NO text outside the actual code
-- Output raw {prompt} code ONLY - start directly with code
-- Return pure executable {prompt} code with no formatting
+- Output raw {extension} code ONLY - start directly with code
+- Return pure executable {extension} code with no formatting
 """
         
         response = model.generate_content(clean_prompt)
