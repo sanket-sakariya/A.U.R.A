@@ -116,3 +116,27 @@ def ask_gemini(prompt):
         
     except Exception as e:
         return f"Error: {e}"
+
+
+def code_gemini(prompt):
+    try:
+        clean_prompt = f"""
+{prompt}
+
+CRITICAL REQUIREMENTS:
+- Generate ONLY {prompt} code
+- NO comments whatsoever
+- NO explanations
+- NO markdown code blocks
+- NO backticks (`)
+- NO language identifiers
+- NO text outside the actual code
+- Output raw {prompt} code ONLY - start directly with code
+- Return pure executable {prompt} code with no formatting
+"""
+        
+        response = model.generate_content(clean_prompt)
+        return clean_text(response.text)
+        
+    except Exception as e:
+        return f"Error: {e}"

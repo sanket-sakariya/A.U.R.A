@@ -1,9 +1,15 @@
 import os
 from assistant import speak
-from gemini_chat import ask_gemini
+from gemini_chat import ask_gemini,code_gemini
+
 
 def create_and_write_file(command, update_status=None, update_output=None):
     try:
+        # Create output folder if it doesn't exist
+        output_folder = "output"
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        
         # Extract filename and extension
         words = command.lower().split()
         if "file" in words and "name" in words:
@@ -19,22 +25,24 @@ def create_and_write_file(command, update_status=None, update_output=None):
             }.get(ext, ".txt")
 
             full_filename = f"{filename}{extension}"
+            # Create full path with output folder
+            file_path = os.path.join(output_folder, full_filename)
 
             # Extract prompt for Gemini after 'named <filename>'
             prompt_start_index = command.lower().find(filename) + len(filename)
             prompt = command[prompt_start_index:].strip()
 
             # Ask Gemini and write content
-            content = ask_gemini(prompt)
-            with open(full_filename, "w", encoding="utf-8") as f:
+            content = code_gemini(prompt)
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
 
             if update_status:
-                update_status(f"Created and written to {full_filename}")
+                update_status(f"Created and written to {file_path}")
             if update_output:
-                update_output(f"File `{full_filename}` created and content written successfully.")
+                update_output(f"File `{file_path}` created and content written successfully.")
 
-            return full_filename
+            return file_path
 
     except Exception as e:
         if update_output:
