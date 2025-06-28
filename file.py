@@ -55,8 +55,10 @@ def create_and_write_file(command, update_status=None, update_output=None):
 
 def read_created_file(command, update_status=None, update_output=None):
     try:
+        output_folder = "output"
         # Extract file extension and filename
         words = command.lower().split()
+        print(words)
         if "file" in words and "name" in words:
             ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
             name_index = words.index("name") + 1
@@ -71,9 +73,11 @@ def read_created_file(command, update_status=None, update_output=None):
             }.get(ext, ".txt")
 
             full_filename = f"{filename}{extension}"
+            # Create full path with output folder
+            file_path = os.path.join(output_folder, full_filename)
 
-            if not os.path.exists(full_filename):
-                msg = f"File '{full_filename}' does not exist."
+            if not os.path.exists(file_path):
+                msg = f"File '{full_filename}' does not exist in output folder."
                 if update_output:
                     update_output(msg)
                 if update_status:
@@ -81,11 +85,11 @@ def read_created_file(command, update_status=None, update_output=None):
                 speak("Sorry, I couldn't find the file.")
                 return
 
-            with open(full_filename, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
 
             if update_status:
-                update_status(f"Reading {full_filename}")
+                update_status(f"Reading {file_path}")
             if update_output:
                 update_output(f"Content of `{full_filename}`:\n\n{content}")
             speak(f"Here is the content of {full_filename}")
