@@ -13,7 +13,7 @@ def create_and_write_file(command, update_status=None, update_output=None):
         # Extract filename and extension
         words = command.lower().split()
         if "file" in words and "name" in words:
-            ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
+            ext = next((w for w in words if w in ["text", "python", "html", "java", "json", "javascript", "php"]), "text")
             name_index = words.index("name") + 1
             filename = words[name_index]
             extension = {
@@ -21,6 +21,8 @@ def create_and_write_file(command, update_status=None, update_output=None):
                 "python": ".py",
                 "html": ".html",
                 "java": ".java",
+                "javascript": ".js",
+                "php": ".php",
                 "json": ".json"
             }.get(ext, ".txt")
 
@@ -60,7 +62,7 @@ def read_created_file(command, update_status=None, update_output=None):
         words = command.lower().split()
         print(words)
         if "file" in words and "name" in words:
-            ext = next((w for w in words if w in ["text", "python", "html", "java", "json"]), "text")
+            ext = next((w for w in words if w in ["text", "python", "html", "java", "json", "javascript", "php"]), "text")
             name_index = words.index("name") + 1
             filename = words[name_index]
 
@@ -69,6 +71,8 @@ def read_created_file(command, update_status=None, update_output=None):
                 "python": ".py",
                 "html": ".html",
                 "java": ".java",
+                "javascript": ".js",
+                "php": ".php",
                 "json": ".json"
             }.get(ext, ".txt")
 
