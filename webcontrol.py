@@ -10,7 +10,20 @@ ALLOWED_WEBSITES = {
     "youtube": "https://www.youtube.com",
     "facebook": "https://www.facebook.com",
     "twitter": "https://www.twitter.com",
-    "wikipedia": "https://www.wikipedia.org"
+    "wikipedia": "https://www.wikipedia.org",
+    "github": "https://www.github.com",
+    "stackoverflow": "https://www.stackoverflow.com",
+    "reddit": "https://www.reddit.com",
+    "linkedin": "https://www.linkedin.com", 
+    "instagram": "https://www.instagram.com",
+    "amazon": "https://www.amazon.com",
+    "ebay": "https://www.ebay.com",
+    "netflix": "https://www.netflix.com",
+    "spotify": "https://www.spotify.com",
+    "twitch": "https://www.twitch.tv",
+    "bing": "https://www.bing.com",
+    "yahoo": "https://www.yahoo.com",
+    "college": "https://gecrajkot.ac.in/"
 }
 
 # Path to your chromedriver
