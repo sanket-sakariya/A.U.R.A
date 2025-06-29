@@ -2,7 +2,7 @@ import sys
 import math
 import threading
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QTextEdit, QHBoxLayout, QLineEdit, QPushButton
 from PyQt5.QtGui import QPainter, QColor, QFont, QRadialGradient, QBrush, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QTimer
 from assistant import run_assistant
@@ -20,7 +20,7 @@ class VoiceAssistantGUI(QWidget):
         # Title
         self.title_label = QLabel("🤖 A.U.R.A")
         self.title_label.setFont(QFont("Orbitron", 32))
-        self.title_label.setAlignment(Qt.AlignCenter)
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title_label.setStyleSheet("color: #00ffff; background-color: transparent;")
         layout.addWidget(self.title_label)
 
@@ -37,24 +37,66 @@ class VoiceAssistantGUI(QWidget):
         self.output_area.setReadOnly(True)
         layout.addWidget(self.output_area)
 
-        # # Mic Icon
-        # self.mic_label = QLabel()
-        # self.mic_label.setAlignment(Qt.AlignCenter)
-        # self.mic_label.setPixmap(QPixmap("voice.png").scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        # self.mic_label.setCursor(QCursor(Qt.PointingHandCursor))
-        # self.mic_label.mousePressEvent = self.toggle_listening
-        # layout.addWidget(self.mic_label)
+        # Text Input Section
+        input_layout = QHBoxLayout()
+        
+        # Text Input Field
+        self.text_input = QLineEdit()
+        self.text_input.setFont(QFont("Arial", 12))
+        self.text_input.setStyleSheet("""
+            QLineEdit {
+                background-color: #1a1a1a;
+                color: #ffffff;
+                border: 2px solid #39ff14;
+                border-radius: 10px;
+                padding: 8px;
+                font-size: 12px;
+            }
+            QLineEdit:focus {
+                border: 2px solid #00ffff;
+            }
+        """)
+        self.text_input.setPlaceholderText("Type your command here...")
+        self.text_input.returnPressed.connect(self.send_text_command)
+        input_layout.addWidget(self.text_input)
+        
+        # Send Button
+        self.send_button = QPushButton("Send")
+        self.send_button.setFont(QFont("Arial", 12, QFont.Bold))
+        self.send_button.setStyleSheet("""
+            QPushButton {
+                background-color: #39ff14;
+                color: #000000;
+                border: none;
+                border-radius: 10px;
+                padding: 8px 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #00ffff;
+                color: #000000;
+            }
+            QPushButton:pressed {
+                background-color: #00ff00;
+            }
+        """)
+        self.send_button.clicked.connect(self.send_text_command)
+        input_layout.addWidget(self.send_button)
+        
+        layout.addLayout(input_layout)
+
 
         # Footer
         self.footer = QLabel("Created By : Sanket")
         self.footer.setFont(QFont("Arial", 11, QFont.Bold))
         self.footer.setStyleSheet("color: #ff4d4d; background-color: transparent;")
-        self.footer.setAlignment(Qt.AlignCenter)
+        self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.footer)
 
         self.setLayout(layout)
         self.listening_thread = None
         self.active = False
+        self.assistant_callback = None
 
         # Animation Timer
         self.timer = QTimer(self)
@@ -86,7 +128,7 @@ class VoiceAssistantGUI(QWidget):
 
         brush = QBrush(gradient)
         painter.setBrush(brush)
-        painter.setPen(Qt.NoPen)
+        painter.setPen(Qt.PenStyle.NoPen)
         painter.drawEllipse(center_x - radius - 60, center_y - radius - 60,
                             (radius + 60) * 2, (radius + 60) * 2)
 
@@ -95,6 +137,30 @@ class VoiceAssistantGUI(QWidget):
 
     def update_output(self, message):
         self.output_area.append(message)
+
+    def send_text_command(self):
+        """Handle text input commands"""
+        text = self.text_input.text().strip()
+        if text:
+            # Display user input
+            self.update_output(f"You: {text}")
+            self.text_input.clear()
+            
+            # Update status
+            self.update_status("Processing text command...")
+            
+            # If assistant callback is available, use it
+            if self.assistant_callback:
+                try:
+                    # Call the assistant with the text command
+                    result = self.assistant_callback(text)
+                    if result == "exit":
+                        self.close_app()
+                except Exception as e:
+                    self.update_output(f"Error processing command: {str(e)}")
+                    self.update_status("Error")
+            else:
+                self.update_output("Assistant not ready yet. Please wait...")
 
     def toggle_listening(self, event):
         if not self.active:
@@ -105,14 +171,20 @@ class VoiceAssistantGUI(QWidget):
             self.active = True
             self.listening_thread = threading.Thread(
                 target=run_assistant,
-                args=(self.update_status, self.update_output, self.close_app),
+                args=(self.update_status, self.update_output, self.close_app, self.set_assistant_callback),
                 daemon=True
             )
             self.listening_thread.start()
 
+    def set_assistant_callback(self, callback):
+        """Set the callback function for text commands"""
+        self.assistant_callback = callback
+
     def close_app(self):
         self.update_status("Exiting...")
-        QApplication.instance().quit()
+        app = QApplication.instance()
+        if app:
+            app.quit()
         os._exit(0)
 
 if __name__ == "__main__":
