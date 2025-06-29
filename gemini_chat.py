@@ -266,6 +266,9 @@ def ask_gemini(prompt):
             # If coding-related, use code generation
             return code_gemini(prompt)  # Default to Python code generation
 
+        if "joke" in prompt_lower:
+            return joke_gemini(prompt)
+
         # If not allowed or doesn't match question patterns, return default response
         if not is_allowed and not has_question_pattern:
             return "I don't understand."
@@ -303,6 +306,53 @@ CRITICAL REQUIREMENTS:
 """
         
         response = model.generate_content(clean_prompt)
+        return clean_text(response.text)
+        
+    except Exception as e:
+        return f"Error: {e}"
+
+
+def joke_gemini(prompt):
+    try:
+        import random
+        
+        # List of different joke categories and prompts to add variety
+        joke_variations = [
+            "Generate a very funny and original joke about technology or computers.",
+            "Create a hilarious joke about animals or pets.",
+            "Make up a clever joke about food or cooking.",
+            "Tell me a funny joke about work or office life.",
+            "Generate a witty joke about travel or transportation.",
+            "Create a humorous joke about sports or fitness.",
+            "Make up a clever joke about music or entertainment.",
+            "Tell me a funny joke about science or education.",
+            "Generate a witty joke about weather or nature.",
+            "Create a humorous joke about relationships or family.",
+            "Make up a clever joke about shopping or money.",
+            "Tell me a funny joke about time or schedules.",
+            "Generate a witty joke about communication or language.",
+            "Create a humorous joke about hobbies or activities.",
+            "Make up a clever joke about health or wellness."
+        ]
+        
+        # Randomly select a joke variation
+        selected_prompt = random.choice(joke_variations)
+        
+        joke_prompt = f"""
+{selected_prompt}
+
+CRITICAL REQUIREMENTS:
+- Make it completely different and creative
+- Hilarious and unexpected
+- Clean and family-friendly
+- Something that would make people laugh out loud
+- Avoid common joke formats, be unique
+- Add a random element or twist to make it unpredictable
+
+Please provide just the joke, no explanations or setup text.
+"""
+        
+        response = model.generate_content(joke_prompt)
         return clean_text(response.text)
         
     except Exception as e:
