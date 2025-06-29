@@ -83,7 +83,7 @@ def ask_gemini(prompt):
         
         # coding related keywords
         coding_keywords = [
-            "code", "programming", "python", "javascript", "java", "c++", "c#", "ruby", "php",
+            "code", "programming", "python", "javascript", "java","c", "c++", "c#", "ruby", "php",
             "html", "css", "sql", "database", "algorithm", "data structure", "debugging",
             "software development", "web development", "app development"
         ]
