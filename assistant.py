@@ -221,6 +221,63 @@ def process_text_command(query, update_status, update_output):
         response = ask_gemini(prompt)
         speak(response, update_status, update_output)
 
+    elif "summarize" in query.lower() or "summary" in query.lower():
+        from gemini_chat import summarize_document
+        import re
+        
+        # Extract file path from command
+        # Patterns: "summarize file.pdf", "summary of document.docx", "read and summarize report.pdf"
+        patterns = [
+            r"summarize\s+(.+?)(?:\s|$)",
+            r"summary\s+(?:of\s+)?(.+?)(?:\s|$)",
+            r"read\s+(?:and\s+)?summarize\s+(.+?)(?:\s|$)",
+            r"summarize\s+(?:the\s+)?(?:file\s+)?(.+?)(?:\s|$)"
+        ]
+        
+        file_path = None
+        for pattern in patterns:
+            match = re.search(pattern, query.lower())
+            if match:
+                file_path = match.group(1).strip()
+                break
+        
+        if not file_path:
+            speak("Please specify the file you want me to summarize. For example: 'summarize document.pdf' or 'summary of report.docx'", update_status, update_output)
+            return "continue"
+        
+        # Check if file exists
+        if not os.path.exists(file_path):
+            # Try looking in current directory
+            current_dir_files = [f for f in os.listdir('.') if os.path.isfile(f)]
+            matching_files = [f for f in current_dir_files if file_path.lower() in f.lower()]
+            
+            if matching_files:
+                file_path = matching_files[0]
+                speak(f"Found file: {file_path}", update_status, update_output)
+            else:
+                speak(f"File '{file_path}' not found. Please check the file name and try again.", update_status, update_output)
+                return "continue"
+        
+        # Check file extension
+        file_extension = os.path.splitext(file_path)[1].lower()
+        if file_extension not in ['.pdf', '.docx', '.doc']:
+            speak(f"Unsupported file format '{file_extension}'. I can only summarize PDF (.pdf) and Word (.docx, .doc) documents.", update_status, update_output)
+            return "continue"
+        
+        # Process the document
+        speak(f"Starting to summarize {os.path.basename(file_path)}...", update_status, update_output)
+        summary = summarize_document(file_path, update_status, update_output)
+        
+        if summary.startswith("Error:"):
+            speak(summary, update_status, update_output)
+        else:
+            # Split summary into smaller parts for speech
+            summary_parts = summary.split('\n\n')
+            for part in summary_parts:
+                if part.strip():
+                    speak(part.strip(), update_status, update_output)
+                    update_output(part.strip())
+
     else:
         prompt = query.strip()
         from gemini_chat import ask_gemini

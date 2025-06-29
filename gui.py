@@ -4,8 +4,17 @@ import threading
 import os
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QTextEdit, QHBoxLayout, QLineEdit, QPushButton
 from PyQt5.QtGui import QPainter, QColor, QFont, QRadialGradient, QBrush, QPixmap, QCursor
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QObject, QMetaType
 from assistant import run_assistant
+
+# Register QTextCursor for thread-safe communication
+from PyQt5.QtGui import QTextCursor
+QMetaType.type("QTextCursor")
+
+class AssistantSignals(QObject):
+    """Signals for thread-safe communication with GUI"""
+    status_update = pyqtSignal(str)
+    output_update = pyqtSignal(str)
 
 class VoiceAssistantGUI(QWidget):
     def __init__(self):
@@ -85,7 +94,6 @@ class VoiceAssistantGUI(QWidget):
         
         layout.addLayout(input_layout)
 
-
         # Footer
         self.footer = QLabel("Created By : Sanket")
         self.footer.setFont(QFont("Arial", 11, QFont.Bold))
@@ -97,6 +105,11 @@ class VoiceAssistantGUI(QWidget):
         self.listening_thread = None
         self.active = False
         self.assistant_callback = None
+        
+        # Set up signals for thread-safe communication
+        self.signals = AssistantSignals()
+        self.signals.status_update.connect(self.update_status)
+        self.signals.output_update.connect(self.update_output)
 
         # Animation Timer
         self.timer = QTimer(self)
@@ -169,9 +182,12 @@ class VoiceAssistantGUI(QWidget):
     def start_assistant(self):
         if not self.active:
             self.active = True
+            self.update_status("Starting assistant...")
+            
+            # Use signals for thread-safe communication
             self.listening_thread = threading.Thread(
                 target=run_assistant,
-                args=(self.update_status, self.update_output, self.close_app, self.set_assistant_callback),
+                args=(self.signals.status_update.emit, self.signals.output_update.emit, self.close_app, self.set_assistant_callback),
                 daemon=True
             )
             self.listening_thread.start()

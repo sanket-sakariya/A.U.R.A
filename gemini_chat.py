@@ -1,15 +1,15 @@
 import os
 import re
 from dotenv import load_dotenv
-import google.generativeai as genai
+import google.generativeai as genai  # type: ignore
 
 # Load .env variables
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 # Configure Gemini
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-2.0-flash")
+genai.configure(api_key=api_key)  # type: ignore
+model = genai.GenerativeModel('gemini-1.5-flash')  # type: ignore
 
 def clean_text(text):
     # Remove markdown symbols
@@ -20,6 +20,160 @@ def clean_text(text):
     text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)  # Links
     return text.strip()
 
+def extract_text_from_pdf(file_path):
+    """Extract text from PDF file"""
+    try:
+        import PyPDF2
+        text = ""
+        with open(file_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            for page in pdf_reader.pages:
+                text += page.extract_text() + "\n"
+        return text.strip()
+    except ImportError:
+        return "Error: PyPDF2 library not installed. Please install it using: pip install PyPDF2"
+    except Exception as e:
+        return f"Error reading PDF: {str(e)}"
+
+def extract_text_from_docx(file_path):
+    """Extract text from Word document"""
+    try:
+        from docx import Document
+        doc = Document(file_path)
+        text = ""
+        for paragraph in doc.paragraphs:
+            text += paragraph.text + "\n"
+        return text.strip()
+    except ImportError:
+        return "Error: python-docx library not installed. Please install it using: pip install python-docx"
+    except Exception as e:
+        return f"Error reading Word document: {str(e)}"
+
+def chunk_text(text, max_chunk_size=30000):
+    """Split text into chunks for processing large documents"""
+    if len(text) <= max_chunk_size:
+        return [text]
+    
+    chunks = []
+    current_chunk = ""
+    sentences = text.split('. ')
+    
+    for sentence in sentences:
+        if len(current_chunk + sentence) < max_chunk_size:
+            current_chunk += sentence + '. '
+        else:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+            current_chunk = sentence + '. '
+    
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    
+    return chunks
+
+def summarize_document_chunk(chunk, document_type="document"):
+    """Summarize a single chunk of document text"""
+    try:
+        prompt = f"""
+Please provide a comprehensive summary of the following {document_type} content. 
+Focus on the main points, key information, and important details, Give the summary in 100 words.
+
+Content:
+{chunk}
+
+Please provide a clear, well-structured summary that captures the essential information.
+"""
+        response = model.generate_content(prompt)
+        return clean_text(response.text)
+    except Exception as e:
+        return f"Error summarizing chunk: {str(e)}"
+
+def summarize_document(file_path, update_status=None, update_output=None):
+    """Read and summarize PDF or Word documents"""
+    try:
+        if not os.path.exists(file_path):
+            return f"Error: File '{file_path}' not found."
+        
+        file_extension = os.path.splitext(file_path)[1].lower()
+        
+        if update_status:
+            update_status(f"Reading {file_extension.upper()} document...")
+        
+        # Extract text based on file type
+        if file_extension == '.pdf':
+            text = extract_text_from_pdf(file_path)
+            document_type = "PDF document"
+        elif file_extension in ['.docx', '.doc']:
+            text = extract_text_from_docx(file_path)
+            document_type = "Word document"
+        else:
+            return f"Error: Unsupported file format '{file_extension}'. Supported formats: PDF (.pdf), Word (.docx, .doc)"
+        
+        if text.startswith("Error:"):
+            return text
+        
+        if not text.strip():
+            return "Error: No text content found in the document."
+        
+        # Get file size info
+        file_size = os.path.getsize(file_path) / (1024 * 1024)  # Size in MB
+        text_length = len(text)
+        
+        if update_output:
+            update_output(f"Document size: {file_size:.2f} MB, Text length: {text_length:,} characters")
+        
+        # Chunk the text if it's too large
+        chunks = chunk_text(text)
+        
+        if len(chunks) == 1:
+            # Single chunk - summarize directly
+            if update_status:
+                update_status("Summarizing document...")
+            
+            summary = summarize_document_chunk(chunks[0], document_type)
+            
+            if update_status:
+                update_status("Document summarized successfully")
+            
+            return f"Summary of {os.path.basename(file_path)}:\n\n{summary}"
+        
+        else:
+            # Multiple chunks - summarize each and then create a final summary
+            if update_status:
+                update_status(f"Processing large document ({len(chunks)} chunks)...")
+            
+            chunk_summaries = []
+            for i, chunk in enumerate(chunks, 1):
+                if update_output:
+                    update_output(f"Processing chunk {i}/{len(chunks)}...")
+                
+                chunk_summary = summarize_document_chunk(chunk, document_type)
+                chunk_summaries.append(chunk_summary)
+            
+            # Create final summary from all chunk summaries
+            if update_status:
+                update_status("Creating final summary...")
+            
+            final_summary_prompt = f"""
+I have a {document_type} that was too large to process at once, so I've summarized it into {len(chunks)} parts. 
+Please create a comprehensive final summary that combines all these summaries into one coherent summary.
+
+Summaries:
+{chr(10).join(f"Part {i+1}: {summary}" for i, summary in enumerate(chunk_summaries))}
+
+Please provide a well-structured final summary that captures all the important information from the document.
+"""
+            
+            final_summary = model.generate_content(final_summary_prompt)
+            final_summary_text = clean_text(final_summary.text)
+            
+            if update_status:
+                update_status("Document summarized successfully")
+            
+            return f"Summary of {os.path.basename(file_path)}:\n\n{final_summary_text}"
+    
+    except Exception as e:
+        return f"Error processing document: {str(e)}"
 
 def ask_gemini(prompt):
     try:
